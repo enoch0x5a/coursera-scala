@@ -2,6 +2,7 @@ package objsets
 
 import org.scalatest.FunSuite
 
+
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
@@ -18,9 +19,24 @@ class TweetSetSuite extends FunSuite {
     val set5 = set4c.incl(d)
   }
 
-  def size(set: TweetSet): Int = {
-    if (set.isEmpty) 0
-    else 1 + size(set.tail)
+  def asSet(tweets: TweetSet): Set[Tweet] = {
+    var res = Set[Tweet]()
+    tweets.foreach(res += _)
+    res
+  }
+
+  def size(set: TweetSet): Int = asSet(set).size
+
+  test("toList: on empty set") {
+    new TestSets {
+      assert(set1.toList(true) === Nil)
+    }
+  }
+
+  test("toList: on set2") {
+    new TestSets {
+      assert(set2.toList(true).head.user === "a" )
+    }
   }
 
   test("filter: on empty set") {
@@ -59,11 +75,12 @@ class TweetSetSuite extends FunSuite {
     }
   }
 
-  test("ascending: set5") {
+  test("descending: set5") {
     new TestSets {
-      val trends = set5.ascendingByRetweet
+      val trends = set5.descendingByRetweet
       assert(!trends.isEmpty)
-      assert(trends.head.user === "c")
+      assert(trends.head.user == "a" || trends.head.user == "b")
     }
   }
-}
+
+  }

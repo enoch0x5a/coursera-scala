@@ -8,7 +8,7 @@ import org.scalatest.junit.JUnitRunner
 import Anagrams._
 
 @RunWith(classOf[JUnitRunner])
-class AnagramsSuite extends FunSuite {
+class AnagramsSuite extends FunSuite  {
 
   test("wordOccurrences: abcd") {
     assert(wordOccurrences("abcd") === List(('a', 1), ('b', 1), ('c', 1), ('d', 1)))
@@ -19,17 +19,14 @@ class AnagramsSuite extends FunSuite {
   }
 
 
-
   test("sentenceOccurrences: abcd e") {
     assert(sentenceOccurrences(List("abcd", "e")) === List(('a', 1), ('b', 1), ('c', 1), ('d', 1), ('e', 1)))
   }
 
 
-
   test("dictionaryByOccurrences.get: eat") {
     assert(dictionaryByOccurrences.get(List(('a', 1), ('e', 1), ('t', 1))).map(_.toSet) === Some(Set("ate", "eat", "tea")))
   }
-
 
 
   test("word anagrams: married") {
@@ -48,7 +45,6 @@ class AnagramsSuite extends FunSuite {
     val lad = List(('a', 1), ('d', 1), ('l', 1))
     assert(subtract(lard, r) === lad)
   }
-
 
 
   test("combinations: []") {
@@ -70,7 +66,6 @@ class AnagramsSuite extends FunSuite {
     )
     assert(combinations(abba).toSet === abbacomb.toSet)
   }
-
 
 
   test("sentence anagrams: []") {
@@ -103,6 +98,6 @@ class AnagramsSuite extends FunSuite {
       List("Linux", "rulez")
     )
     assert(sentenceAnagrams(sentence).toSet === anas.toSet)
-  }  
+  }
 
 }

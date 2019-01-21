@@ -2,6 +2,7 @@ package funsets
 
 import org.scalatest.FunSuite
 
+
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
@@ -14,11 +15,10 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class FunSetSuite extends FunSuite {
 
-
   /**
    * Link to the scaladoc - very clear and detailed tutorial of FunSuite
    *
-   * http://doc.scalatest.org/1.8/index.html#org.scalatest.FunSuite
+   * http://doc.scalatest.org/1.9.1/index.html#org.scalatest.FunSuite
    *
    * Operators
    *  - test
@@ -29,10 +29,10 @@ class FunSetSuite extends FunSuite {
   /**
    * Tests are written using the "test" operator and the "assert" method.
    */
-  test("string take") {
-    val message = "hello, world"
-    assert(message.take(5) == "hello")
-  }
+  // test("string take") {
+  //   val message = "hello, world"
+  //   assert(message.take(5) == "hello")
+  // }
 
   /**
    * For ScalaTest tests, there exists a special equality operator "===" that
@@ -43,56 +43,54 @@ class FunSetSuite extends FunSuite {
    * Try it out! Change the values so that the assertion fails, and look at the
    * error message.
    */
-  test("adding ints") {
-    assert(1 + 2 === 3)
-  }
+  // test("adding ints") {
+  //   assert(1 + 2 === 3)
+  // }
 
-  
+
   import FunSets._
 
   test("contains is implemented") {
     assert(contains(x => true, 100))
   }
-  
+
   /**
    * When writing tests, one would often like to re-use certain values for multiple
    * tests. For instance, we would like to create an Int-set and have multiple test
    * about it.
-   * 
+   *
    * Instead of copy-pasting the code for creating the set into every test, we can
    * store it in the test class using a val:
-   * 
+   *
    *   val s1 = singletonSet(1)
-   * 
+   *
    * However, what happens if the method "singletonSet" has a bug and crashes? Then
    * the test methods are not even executed, because creating an instance of the
    * test class fails!
-   * 
+   *
    * Therefore, we put the shared values into a separate trait (traits are like
    * abstract classes), and create an instance inside each test method.
-   * 
+   *
    */
 
   trait TestSets {
     val s1 = singletonSet(1)
     val s2 = singletonSet(2)
     val s3 = singletonSet(3)
-
-    val s1001 = singletonSet(1001)
   }
 
   /**
    * This test is currently disabled (by using "ignore") because the method
    * "singletonSet" is not yet implemented and the test would fail.
-   * 
+   *
    * Once you finish your implementation of "singletonSet", exchange the
    * function "ignore" by "test".
    */
   test("singletonSet(1) contains 1") {
-    
+
     /**
      * We create a new instance of the "TestSets" trait, this gives us access
-     * to the values "s1" to "s3". 
+     * to the values "s1" to "s3".
      */
     new TestSets {
       /**
@@ -103,7 +101,7 @@ class FunSetSuite extends FunSuite {
     }
   }
 
-  test("union contains all elements") {
+  test("union contains all elements of each set") {
     new TestSets {
       val s = union(s1, s2)
       assert(contains(s, 1), "Union 1")
@@ -112,66 +110,46 @@ class FunSetSuite extends FunSuite {
     }
   }
 
-  test("intersection contains common elements only") {
+  test("intersect contains elements common to both sets") {
     new TestSets {
-      val s = union(s1, s2)
-      val t = union(s1, s3)
-      val i = intersect(s,t)
+      val u = union(s1, s2)
+      val i = intersect(u, s1)
       assert(contains(i, 1), "intersect 1")
       assert(!contains(i, 2), "intersect 2")
       assert(!contains(i, 3), "intersect 3")
     }
   }
 
-  test("Filter works like intersection") {
+  test("diff returns elements that are in left but not in right") {
     new TestSets {
-      val s = union(s1, s2)
-      val f = filter(s, (_ == 1))
+      val u = union(s1, s2)
+      val d = diff(u, s2)
+      assert(contains(d, 1), "diff 1")
+      assert(!contains(d, 2), "diff 2")
+      assert(!contains(d, 3), "diff 3")
+    }
+  }
+
+  test("filter returns subset so that each element passed to predicate returns true") {
+    new TestSets {
+      val u = union(s1, s2)
+      val f = filter(u, (x: Int) => x < 2)
       assert(contains(f, 1), "filter 1")
       assert(!contains(f, 2), "filter 2")
     }
   }
 
-  test("diff works") {
-    new TestSets {
-      val s = union(s2, s3)
-      val t = union(s1, s)
-      val d = diff(t, s)
-      assert(contains(d, 1), "intersect 1")
-      assert(!contains(d, 2), "intersect 2")
-      assert(!contains(d, 3), "intersect 3")
-    }
+  test("forall tests all elements against predicate") {
+    val s = (x: Int) => x < 1000
+    assert(forall(s, (x: Int) => x < 10000), "forall x < 10000")
+    assert(!forall(s, (x: Int) => x == 1), "forall x == 1")
   }
 
-  test("forall works") {
-    new TestSets {
-      val s = union(union(s1, s2), union(s3, s1001))
+  test("exists tests whether there is element that satisfies given predicate")(pending)
 
-      assert(forall(s, (_ < 4)))
-      assert(!forall(s, (_ < 2)))
-    }
+  test("map returns new set from given one with applied transformation function to each element") {
+    val s = (x: Int) => x == 1 || x == 2 || x == 1000
+    assert(FunSets.toString(map(s, (x: Int) => x + 1)) === "{2,3,1001}", "{1,2,1000} == {2,3,1001}")
   }
 
-  test("exists works") {
-    new TestSets {
-      val s = union(union(s1, s2), union(s3, s1001))
-  
-      assert(exists(s, (_ < 4)))
-      assert(exists(s, (_ < 2)))
-      assert(!exists(s, (_ < 0)))
-    }
-  }
-
-  test("map works") {
-    new TestSets {
-      val s = union(union(s1, s2), s3)
-      val mapped = map(s, (_ * 2))
-
-      assert( contains(mapped, 2), "map 2" )
-      assert( contains(mapped, 4), "map 4" )
-      assert( contains(mapped, 6), "map 6" )
-
-      assert( !contains(mapped, 3), "map 3" )
-    }
-  }
 }

@@ -1,0 +1,7 @@
+[0m[[0m[31merror[0m] [0m[0m/home/dyx/projects/coursera/progfun/funsets/src/main/scala/funsets/FunSets.scala:51:31: type mismatch;[0m
+[0m[[0m[31merror[0m] [0m[0m found   : funsets.FunSets.Set[0m
+[0m[[0m[31merror[0m] [0m[0m    (which expands to)  Int => Boolean[0m
+[0m[[0m[31merror[0m] [0m[0m required: Boolean[0m
+[0m[[0m[31merror[0m] [0m[0m      (elem: Int) => intersect(s, p)[0m
+[0m[[0m[31merror[0m] [0m[0m                              ^[0m
+[0m[[0m[31merror[0m] [0m[0mone error found[0m

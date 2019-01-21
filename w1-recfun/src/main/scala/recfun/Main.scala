@@ -1,5 +1,4 @@
 package recfun
-import common._
 
 object Main {
   def main(args: Array[String]) {
@@ -14,33 +13,34 @@ object Main {
   /**
    * Exercise 1
    */
-  def pascal(c: Int, r: Int): Int = (c,r) match {
-     case (0, _) => 1
-     case (c, r)  if (c==r) => 1
-     case (c,r) => pascal(c,r-1)+pascal(c-1,r-1)
-  }
-
+    def pascal(c: Int, r: Int): Int = 
+      if ((c == 0) || (r == c)) 1
+      else pascal(c, r - 1) + pascal(c - 1, r - 1)
+  
   /**
    * Exercise 2
    */
-  def balance(chars: List[Char], count:Int = 0): Boolean = (chars, count) match {
-     case (cs, 0)  if cs.isEmpty => true
-     case (cs, _)  if cs.isEmpty => false
-     case (cs, c)  => cs.head match {
-        case '(' => balance(cs.tail, c+1)
-        case ')' if c > 0 => balance(cs.tail, c-1)
-        case ')' => false
-        case _  => balance(cs.tail, c)
-     }
-  }
+    def balance(chars: List[Char]): Boolean = {
+      def balance_count(chars: List[Char], balance: Int): Boolean = 
+        if ((chars.isEmpty) && (balance == 0)) true
+        else if (balance < 0) false
+        else chars.head match {
+          case '(' => balance_count(chars.tail, balance + 1)
+          case ')' => balance_count(chars.tail, balance - 1)
+          case  _  => balance_count(chars.tail, balance)
 
+        }
+       
+      balance_count(chars, 0)
+    }
+    
+  
   /**
    * Exercise 3
    */
-  def countChange(money: Int, coins: List[Int]): Int = (money, coins) match {
-     case (0, _) => 1
-     case (m, _) if m < 0 => 0
-     case (_, cs)  if cs.isEmpty => 0
-     case (m, cs) => countChange(m - cs.head, cs) + countChange(m, cs.tail) 
+    def countChange(money: Int, coins: List[Int]): Int = {
+      if (money == 0) 1
+      else if (money < 0 || coins.isEmpty) 0
+      else countChange(money - coins.head, coins) + countChange(money, coins.tail)
+    }
   }
-}
